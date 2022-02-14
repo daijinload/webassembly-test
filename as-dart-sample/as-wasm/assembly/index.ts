@@ -1,111 +1,61 @@
-// The entry file of your WebAssembly module.
 import { Console, Descriptor, FileSystem } from "as-wasi";
-import { 
-  JSON
- } from "assemblyscript-json";
-// import { Buffer } from "assemblyscript-json/assembly/util";
+import { JSON } from "assemblyscript-json";
 
-// import { getStoreBytes } from "assemblyscript";
-// export { heap };
-
+// スタティックな関数群
 function store8(ptr: usize, offset: usize, u: u8): void {
   store<u8>(ptr + offset, u);
 }
 function store32(ptr: usize, offset: usize, u: u32): void {
   store<u32>(ptr + (offset << alignof<u32>()), u);
 }
-
 function load8(ptr: usize, offset: usize): u8 {
   return load<u8>(ptr + offset);
 }
-
-function fromCString(cstring: usize): string {
-  let size = 0;
-  while (load8(cstring, size) !== 0) {
-    size++;
-  }
-  return String.UTF8.decodeUnsafe(cstring, size);
-}
-
 function byteLength(str: string): u32 {
-  // return Uint8Array.wrap(String.UTF8.encode(str)).byteLength
   return String.UTF8.encode(str).byteLength
-  // let size = 0;
-  // while (load8(strPtr, size) !== 0) {
-  //   size++;
-  // }
-  // return size;
+}
+function writeRtnOutput(rtnStr: string): i32 {
+  const list = Uint8Array.wrap(String.UTF8.encode(rtnStr))
+  const size = list.byteLength
+  for (let i = 0; i < size; i++) {
+    store8(outStrPtr, i, list[i])
+  }
+  return size
 }
 
-
-function writeCString(cstring: string): void {
-  const ptr = changetype<usize>(cstring);
-  // let size = 0;
-  // while (load<u8>(ptr + size) !== 0) {
-  //   size++;
-  // }
-  memory.copy(outStrPtr, ptr, 64)
-
-  // let size = 0;
-  // for (const codePoint of cstring) {
-  //   store32(outStrPtr, size++, codePoint)
-  // }
-}
-
-
-const IN_STR = new ArrayBuffer(64);
+// 引数のやりとりをするためのメモリ領域確保とポインタ取得
+const PARAM_SIZE = 64;
+const IN_STR = new ArrayBuffer(PARAM_SIZE);
 export const inStrPtr = changetype<usize>(IN_STR);
+const OUT_STR = new ArrayBuffer(PARAM_SIZE);
+export const outStrPtr = changetype<usize>(OUT_STR);
 
-const OUT_STR = new ArrayBuffer(64);
-const outStrPtr = changetype<usize>(OUT_STR);
-
-export function getInStrPtr(): usize {
-  return inStrPtr
-}
-
+// 名前は適当だが、main関数もどき
 export function ddd(): usize {
 
   // 受け取ったjsonのパースをする。非常にめんどい感じ。。。
-  const str = String.UTF8.decodeUnsafe(inStrPtr, 64, true)
-  Console.log(str)
+  const inputJsonStr = String.UTF8.decodeUnsafe(inStrPtr, PARAM_SIZE, true)
+  Console.log(inputJsonStr)
 
-  let rtnStr: string = '{}'
-  const bbb = <JSON.Obj>JSON.parse(str)
-  if (bbb !== null) {
-    const name = bbb.getString('name')
-    if (name !== null) {
-      Console.log(name.toString())
-      rtnStr = `{name:${name.toString()}${name.toString()}}`
+  // 引数のjson文字列からnameプロパティを取り出す。
+  let name = ''
+  const inputJson = <JSON.Obj>JSON.parse(inputJsonStr)
+  if (inputJson !== null) {
+    const _name = inputJson.getString('name')
+    if (_name !== null) {
+      Console.log(_name.toString())
+      name = _name.toString()
     }
   }
 
-  
+  // jsonで書くとダルいので、文字列jsonを書いてみる。
+  // ダブルクォーテーションのみ、\マーク付ける必要あるからそこだけ注意かなぁ。
+  const rtnStr = `{name:${name.toString()}${name.toString()}}`
+
   Console.log(rtnStr)
   Console.log(`${byteLength(rtnStr)}`)
-  const rtnStrPtr = changetype<usize>(rtnStr);
-  // memory.copy(outStrPtr, rtnStrPtr, byteLength(rtnStr) -1)
-  // シンボル分の可能性が高いが、文字列は（文字列長 - 2）の設定となる。
-  // memory.copy(outStrPtr, rtnStrPtr, byteLength(rtnStr)-2)
-  // // memory.copy(outStrPtr, inStrPtr, 64)
-  // // writeCString(str)
-  // // store8(outStrPtr, 0, <u8>str.charCodeAt(0))
-  // Console.log(String.UTF8.decodeUnsafe(outStrPtr, 64, true))
-
-  const list = Uint8Array.wrap(String.UTF8.encode(rtnStr))
-  for (let i = 0; i < list.byteLength; i++) {
-    // Console.log(`${list[i]}`)
-    store8(outStrPtr, i, list[i])
-  }
-
- 
-  // const size = byteLength(rtnStr)
-  // for (let i:u32 = 0; i < size; i++) {
-  //   const v = load8(rtnStrPtr, i);
-  //   Console.log(`${v}`)
-  //   store8(outStrPtr, i, v)
-  // }
-
-  return outStrPtr
+  const size = writeRtnOutput(rtnStr)
+  return size
 }
 
 export function eee(str: string): usize {
