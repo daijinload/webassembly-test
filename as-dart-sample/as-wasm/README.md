@@ -38,6 +38,12 @@ npm run asbuild
 # or
 ./node_modules/.bin/asc assembly/index.ts -b hello-as-release.wasm -t hello-as-release.wat --use abort=wasi_abort --target release
 
+# 標準入出力サンプル
+echo 'aaa' | wasmtime hello-as-release.wasm --invoke ggg 1 2 3
+
+# ファイルのread, writeサンプル（ディレクトリを指定する）
+wasmtime hello-as-release.wasm --dir . --invoke ggg 2 1 2
+
 # run wasmtime
 wasmtime hello-as-release.wasm
 wasmtime hello-as-release.wasm --invoke add 2 5
