@@ -38,4 +38,7 @@ void main() {
   // for (var outputByte in outputByteIterable) {
   //   print(outputByte);
   // }
+
+  // 返却値用の配列を初期化
+  inst.lookupFunction('initMemoryParamOutput')();
 }
