@@ -30,9 +30,9 @@ void main() {
   final outStrPtr = inst.lookupGlobal('outStrPtr')?.value;
 
   final outputSize = ddd();
-  final codePoints = inst.memory.view.getRange(outStrPtr, outStrPtr + outputSize);
-  print(utf8.decode(codePoints.toList()));
-  // for (var codePoint in codePoints) {
-  //   print(codePoint);
+  final outputByteIterable = inst.memory.view.getRange(outStrPtr, outStrPtr + outputSize);
+  print(utf8.decode(outputByteIterable.toList()));
+  // for (var outputByte in outputByteIterable) {
+  //   print(outputByte);
   // }
 }
