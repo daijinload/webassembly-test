@@ -54,10 +54,11 @@ export function ddd(): usize {
 
   Console.log(rtnStr)
   Console.log(`${byteLength(rtnStr)}`)
-  const size = writeRtnOutput(rtnStr)
-  return size
+  const outputSize = writeRtnOutput(rtnStr)
+  return outputSize
 }
 
+// さらに部分的にテストするためのサンプル関数
 export function eee(str: string): usize {
   //Console.log(str)
   return changetype<usize>(str);
@@ -67,121 +68,60 @@ export function eee2(): usize {
   return byteLength('{name:🌠🌠}');
 }
 
+// Retrunマルチバリューが出来るか、計画されているがASでは未対応？っぽい。
 // export function fff(): [u8, u8] {
 //   return [1, 2]
 // }
 
+// 標準入出力と、ファイルのread, write関数
+// メモリを直接扱う形ではないので、wasmtimeなどのランタイムでも簡単に動かせて便利。
+// 主にテスト用かなぁと。
+// wasiのファイルタイプが扱えるならin outをファイルにしたほうが
+// 楽だとは思うがレイテンシやSSDの寿命が気になる場合は辛いか？
+export function ggg(type: i32, inNum: i32, outNum: i32): void {
+  switch(type) { 
+    case 1: { 
+      const str = Console.readAll()
+      if (str !== null) {
+        Console.log("input=" + str);
+        break; 
+      }
+      Console.log("input not found!!");
+      break; 
+    } 
+    case 2: { 
+      const str = _fread(inNum)
+      _fwrite(outNum, "zzz" + str)
+       break; 
+    } 
+    default: { 
+      throw new Error(`type required, std=1, file=2 type=${type}`);
+    } 
+ } 
+}
 
-// export function ddd(): u8 {
-//   store8(mPtr, 0, 5)
-//   // Console.log(mPtr.toString())
-//   // memory.fill(mPtr, 0, 1)
-//   return load8(mPtr, 0)
-//   // return load8(rPtr, 1)
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// @inline
-// function store8(ptr: usize, offset: usize, u: u8): void {
-//   store<u8>(ptr + offset, u);
-// }
-
-// @inline
-// function load8(ptr: usize, offset: usize): u8 {
-//   return load<u8>(ptr + offset);
-// }
-
-// const M = new ArrayBuffer(64);
-// const mPtr = changetype<usize>(M);
-
-// const R = new ArrayBuffer(64);
-// const rPtr = changetype<usize>(R);
-
-// export function ddd(): u8 {
-//   store8(mPtr, 0, 5)
-//   // Console.log(mPtr.toString())
-//   // memory.fill(mPtr, 0, 1)
-//   return load8(mPtr, 0)
-//   // return load8(rPtr, 1)
-// }
-
-
-// const arr = ["aa", "bb"]
-
-// export function ddd(): void {
-//   const ccc = arr[0]
-//   if (ccc != null) {
-//     console.log(ccc)
-//   }
-
-//   // getStoreBytes(1)
-// }
-
-// export function ddd(src: i32, inNum: i32, outNum: i32): void {
-//   switch(src) { 
-//     case 1: { 
-//       // const str = Console.readAll() || ''
-//       // if (str !== null) {
-//       //   Console.log("zzz" + str);
-//       // }
-//       Console.log("zzz");
-//       break; 
-//     } 
-//     case 2: { 
-//       const str = _fread(inNum)
-//       _fwrite(outNum, "zzz" + str)
-//        break; 
-//     } 
-//     default: { 
-//       throw new Error(`src required, std=1, file=2 src=${src}`);
-//     } 
-//  } 
-// }
-
-// function _fread(inNum: i32): string {
-//   let filePath: string = `${inNum}.txt`;
-//   let fileOrNull: Descriptor | null = FileSystem.open(filePath);
-//   if (fileOrNull === null) {
-//     throw new Error("Could not open the file " + filePath);
-//   }
-//   let file = changetype<Descriptor>(fileOrNull);
-//   const strOrNull = file.readString()
-//   if (strOrNull === null) {
-//     throw new Error("Could not read the file " + filePath);
-//   }
-//   return strOrNull
-// }
-// function _fwrite(outNum: i32, str: string): void {
-//   let filePath: string = `${outNum}.txt`;
-//   let fileOrNull: Descriptor | null = FileSystem.open(filePath, "w+");
-//   if (fileOrNull == null) {
-//     throw new Error("Could not open the file " + filePath);
-//   }
-//   let file = changetype<Descriptor>(fileOrNull);
-//   file.writeStringLn(str);
-// }
+function _fread(inNum: i32): string {
+  let filePath: string = `${inNum}.txt`;
+  let fileOrNull: Descriptor | null = FileSystem.open(filePath);
+  if (fileOrNull === null) {
+    throw new Error("Could not open the file " + filePath);
+  }
+  let file = changetype<Descriptor>(fileOrNull);
+  const strOrNull = file.readString()
+  if (strOrNull === null) {
+    throw new Error("Could not read the file " + filePath);
+  }
+  return strOrNull
+}
+function _fwrite(outNum: i32, str: string): void {
+  let filePath: string = `${outNum}.txt`;
+  let fileOrNull: Descriptor | null = FileSystem.open(filePath, "w+");
+  if (fileOrNull == null) {
+    throw new Error("Could not open the file " + filePath);
+  }
+  let file = changetype<Descriptor>(fileOrNull);
+  file.writeStringLn(str);
+}
 
 
 // export function _start(): void {
