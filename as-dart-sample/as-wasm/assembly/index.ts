@@ -29,6 +29,16 @@ const IN_STR = new ArrayBuffer(PARAM_SIZE);
 export const inStrPtr = changetype<usize>(IN_STR);
 const OUT_STR = new ArrayBuffer(PARAM_SIZE);
 export const outStrPtr = changetype<usize>(OUT_STR);
+export function initMemoryParams(): void {
+  initMemoryParamInput()
+  initMemoryParamOutput()
+}
+export function initMemoryParamInput(): void {
+  memory.fill(inStrPtr, 0, PARAM_SIZE)
+}
+export function initMemoryParamOutput(): void {
+  memory.fill(outStrPtr, 0, PARAM_SIZE)
+}
 
 // 名前は適当だが、main関数もどき
 export function ddd(): usize {
@@ -56,6 +66,9 @@ export function ddd(): usize {
   Console.log(rtnStr)
   Console.log(`${byteLength(rtnStr)}`)
   const outputSize = writeRtnOutput(rtnStr)
+
+  // input配列をリセットする
+  initMemoryParamInput()
   Console.log('-------------------- wasm end')
   return outputSize
 }

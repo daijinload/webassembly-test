@@ -13,6 +13,9 @@ void main() {
   final builder = mod.builder()..enableWasi(captureStdout: false, captureStderr: false);
   final inst = builder.build();
 
+  // 引数値と返却値用の配列を初期化してから使う
+  inst.lookupFunction('initMemoryParams')();
+
   // 動的に割り当てる方法がわからないため、関数input用の事前定義した配列のpointerを取得する。
   final inStrPtr = inst.lookupGlobal('inStrPtr')?.value;
 
@@ -35,4 +38,7 @@ void main() {
   // for (var outputByte in outputByteIterable) {
   //   print(outputByte);
   // }
+
+  // 返却値用の配列を初期化
+  inst.lookupFunction('initMemoryParamOutput')();
 }
