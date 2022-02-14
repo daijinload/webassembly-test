@@ -81,26 +81,26 @@ export function eee2(): usize {
 // wasiのファイルタイプが扱えるなら引数や返却値をファイルにすると楽だが、
 // レイテンシやSSDの寿命が気になる場合はメモリ式が良いか？
 export function ggg(type: i32, inNum: i32, outNum: i32): void {
-  switch(type) { 
-    case 1: { 
+  switch (type) {
+    case 1: {
       const str = Console.readAll()
       if (str !== null) {
         Console.log("input=" + str);
-        break; 
+        break;
       }
       Console.log("input not found!!");
-      break; 
-    } 
-    case 2: { 
+      break;
+    }
+    case 2: {
       // ファイルを扱う場合は、ディレクトリを指定して使うので、ファイル名は数値で良いかと。
       const str = _fread(inNum)
       _fwrite(outNum, "zzz" + str)
-       break; 
-    } 
-    default: { 
+      break;
+    }
+    default: {
       throw new Error(`type required, std=1, file=2 type=${type}`);
-    } 
- } 
+    }
+  }
 }
 function _fread(inNum: i32): string {
   let filePath: string = `${inNum}.txt`;
