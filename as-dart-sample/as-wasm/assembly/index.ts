@@ -90,6 +90,7 @@ export function ggg(type: i32, inNum: i32, outNum: i32): void {
       break; 
     } 
     case 2: { 
+      // ファイルを扱う場合は、ディレクトリを指定して使うので、ファイル名は数値で良いかと。
       const str = _fread(inNum)
       _fwrite(outNum, "zzz" + str)
        break; 
@@ -99,7 +100,6 @@ export function ggg(type: i32, inNum: i32, outNum: i32): void {
     } 
  } 
 }
-
 function _fread(inNum: i32): string {
   let filePath: string = `${inNum}.txt`;
   let fileOrNull: Descriptor | null = FileSystem.open(filePath);
@@ -122,72 +122,3 @@ function _fwrite(outNum: i32, str: string): void {
   let file = changetype<Descriptor>(fileOrNull);
   file.writeStringLn(str);
 }
-
-
-// export function _start(): void {
-//   let filePath: string = "fff.txt";
-//   let fileOrNull: Descriptor | null = FileSystem.open(filePath, "w+");
-//   if (fileOrNull == null) {
-//     throw new Error("Could not open the file " + filePath);
-//   }
-//   let file = changetype<Descriptor>(fileOrNull);
-//   file.writeStringLn("Hello World!");
-// //  FileSystem.mkdir('./fff')
-// }
-
-// export function _start(): void {
-//   const aaa = Console.readAll() || ''
-//   if (aaa !== null) {
-//     Console.log("ccc" + aaa + "ccc");
-//   }
-// }
-
-// export function aaa(): string {
-//   return 'abc'
-// }
-
-
-// export function _start(): void {
-//   Console.log("hello world!!");
-// }
-
-// export function add(a: i32, b: i32): i32 {
-//   return a + b;
-// }
-
-// import { JSON } from "assemblyscript-json"; 
-// // import { JSONEncoder } from "assemblyscript-json";
-// expimport { JSON } from "assemblyscript-json";
-// expimport { JSONEncoder } from "assemblyscript-json";
-// export fuimport { JSONEncoder } from "assemblyscript-json";
-// function aaa(): JSON.Obj {
-//   let jsonObj: JSON.Obj = <JSON.Obj>(JSON.parse('{"hello": "world", "value": 24}'));
-//   // let enc = new JSONEncoder();
-//   // enc.setInteger('aaa', 111)
-//   // enc.popObject()
-//   return jsonObj
-// }
-
-// class Aaa {
-//   p1: i32;
-//   p2: i32;
-// }
-// var aaa: Aaa = { p1: 2, p2: 3 };
-
-// export function ccc(): u8 {
-//   return 1;
-// }
-
-// export function _start(): void {
-//   Console.log('hello')
-// }
-
-// const NUM = 20
-
-// export function add(a: i32): i32 {
-//   return a + NUM;
-// }
-
-// export function sss(str: string): void {
-//     Console.log(str);
-// }
