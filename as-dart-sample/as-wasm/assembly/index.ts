@@ -32,6 +32,7 @@ export const outStrPtr = changetype<usize>(OUT_STR);
 
 // 名前は適当だが、main関数もどき
 export function ddd(): usize {
+  Console.log('-------------------- wasm start')
 
   // 受け取ったjsonのパースをする。非常にめんどい感じ。。。
   const inputJsonStr = String.UTF8.decodeUnsafe(inStrPtr, PARAM_SIZE, true)
@@ -55,6 +56,7 @@ export function ddd(): usize {
   Console.log(rtnStr)
   Console.log(`${byteLength(rtnStr)}`)
   const outputSize = writeRtnOutput(rtnStr)
+  Console.log('-------------------- wasm end')
   return outputSize
 }
 
