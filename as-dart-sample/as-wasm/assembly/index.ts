@@ -68,16 +68,16 @@ export function eee2(): usize {
   return byteLength('{name:🌠🌠}');
 }
 
-// Retrunマルチバリューが出来るか、計画されているがASでは未対応？っぽい。
+// Retrunマルチバリューは出来るっぽい話があるが、ASは、まだ未対応？。
 // export function fff(): [u8, u8] {
 //   return [1, 2]
 // }
 
 // 標準入出力と、ファイルのread, write関数
 // メモリを直接扱う形ではないので、wasmtimeなどのランタイムでも簡単に動かせて便利。
-// 主にテスト用かなぁと。
-// wasiのファイルタイプが扱えるならin outをファイルにしたほうが
-// 楽だとは思うがレイテンシやSSDの寿命が気になる場合は辛いか？
+// 主にテスト用かと。
+// wasiのファイルタイプが扱えるなら引数や返却値をファイルにすると楽だが、
+// レイテンシやSSDの寿命が気になる場合はメモリ式が良いか？
 export function ggg(type: i32, inNum: i32, outNum: i32): void {
   switch(type) { 
     case 1: { 
