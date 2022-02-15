@@ -49,19 +49,20 @@ export function ddd(): usize {
   Console.log(inputJsonStr)
 
   // 引数のjson文字列からnameプロパティを取り出す。
-  let name = ''
+  let escapedName: string = ''
   const inputJson = <JSON.Obj>JSON.parse(inputJsonStr)
   if (inputJson !== null) {
-    const _name = inputJson.getString('name')
-    if (_name !== null) {
-      Console.log(_name.toString())
-      name = _name.toString()
+    const name = inputJson.getString('name')
+    if (name !== null) {
+      // toStringも出来るが、json文字列にする場合は、
+      // ダブルクォーテーションなどエスケープする必要があるので、stringifyを使う。
+      Console.log(name.stringify())
+      escapedName = name.stringify()
     }
   }
 
   // jsonで書くとダルいので、文字列jsonを書いてみる。
-  // ダブルクォーテーションのみ、\マーク付ける必要あるからそこだけ注意かなぁ。
-  const rtnStr = `{name:${name.toString()}${name.toString()}}`
+  const rtnStr = `{name:${escapedName}${escapedName}}`
 
   Console.log(rtnStr)
   Console.log(`${byteLength(rtnStr)}`)
